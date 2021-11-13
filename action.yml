@@ -40,7 +40,7 @@ runs:
       with:
         auth: ${{ inputs.gistToken }}
         gistID: ${{ inputs.gistID }}
-        filename: ${{github.repository}}__${{ steps.extract-branch-name.outputs.branch_name }}.json
+        filename: ${{github.event.repository.name}}__${{ steps.extract-branch-name.outputs.branch_name }}.json
         label: ${{ inputs.label }}
         message: ${{ inputs.message }}
         color: ${{ inputs.color }}

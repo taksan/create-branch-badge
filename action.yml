@@ -35,12 +35,20 @@ runs:
         echo "::set-output name=branch_name::${BRANCH_NAME}"
       shell: bash
 
+    - name: Get repository name
+      id: repository-name-extract
+      run: |
+        set -eou pipefail
+        REPO_NAME=$(echo "${{ github.repository }}" | cut -d/ -f2)
+        echo "::set-output name=repository_name::${REPO_NAME}"
+      shell: bash
+
     - name: Create the waiting badge
       uses: schneegans/dynamic-badges-action@v1.0.0
       with:
         auth: ${{ inputs.gistToken }}
         gistID: ${{ inputs.gistID }}
-        filename: ${{github.event.repository.name}}__${{ steps.extract-branch-name.outputs.branch_name }}.json
+        filename: ${{ steps.repository-name-extract.outputs.repository_name }}__${{ steps.extract-branch-name.outputs.branch_name }}.json
         label: ${{ inputs.label }}
         message: ${{ inputs.message }}
         color: ${{ inputs.color }}

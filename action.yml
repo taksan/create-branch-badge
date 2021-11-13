@@ -1,0 +1,47 @@
+name: 'Create coverage badge'
+description: 'Check whether last commint message matches a given pattern'
+inputs:
+  pattern:
+    description: 'token to write to the gist'
+    required: true
+  gistID:
+    description: 'gist id'
+    required: true
+  gistToken:
+    description: 'gist token'
+    required: true
+  label:
+    description: 'label to use for the badge'
+    required: true
+  message:
+    description: 'message to use for the badge'
+    required: true
+  color:
+    description: 'color to use for the badge'
+    required: true
+  namedLogo:
+    description: 'named logo to use for the badge'
+    required: true
+runs:
+  using: "composite"
+  steps:
+    - name: Get branch name
+      id: branch-name-extract
+      run: |
+        set -eou pipefail
+        P1=$(echo "${{ github.ref }}" | cut -d/ -f2)
+        P2=$(echo "${{ github.ref }}" | cut -d/ -f3)
+        BRANCH_NAME="${P1}_${P2}"
+        echo "::set-output name=branch_name::${BRANCH_NAME}"
+      shell: bash
+
+    - name: Create the waiting badge
+      uses: schneegans/dynamic-badges-action@v1.0.0
+      with:
+        auth: ${{ inputs.gistToken }}
+        gistID: ${{ inputs.gistID }}
+        filename: ${{github.repository}}__${{ steps.extract-branch-name.outputs.branch_name }}.json
+        label: ${{ inputs.label }}
+        message: ${{ inputs.message }}
+        color: ${{ inputs.color }}
+        namedLogo: ${{ inputs.namedLogo }}
